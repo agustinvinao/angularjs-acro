@@ -16,3 +16,13 @@ tmp
 .yardoc
 _yardoc
 doc/
+
+/.idea/workspace.xml
+/.idea/vcs.xml
+/.idea/scopes/
+/.idea/modules.xml
+/.idea/misc.xml
+/.idea/encodings.xml
+/.idea/dictionaries/agustinvinao.xml
+/.idea/angularjs-acro.iml
+/.idea/.name

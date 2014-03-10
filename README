@@ -1,0 +1,42 @@
+
+To start hacking on this:
+
+	Create a brach: git checkout -b YOUR_NAME
+
+  Install gems: bundle install
+
+  Start the server: bundle exec rackup
+
+You can update game.rb or remove it and start all over again. Remember to
+update the scheduler in config.ru if you discard game.rb altogether.
+
+The rack application is in acro_app.rb. Expose new routes here if needed.
+
+The grape based API is in acro_api.rb. The skeleton has already been provided.
+IF you don't want to use grape, that's fine.
+
+Write tests using rspec/cucumber. You will need to add the relevant gems and a
+Rakefile to run the tests.
+
+Add AngularJS code in public/javascripts/application.js.
+
+Add styling using CSS/Sass to public/stylesheets/sass/application.css. These
+should get automatically compiled to public/stylesheets/application.css by
+Sass.
+
+If you add any other CSS/JS files to the project, remember to update
+views/index.erb
+
+Then connect to localhost:9292 using your browser.
+
+Note:
+
+  - Writing good, solid code in a test-driven manner is the most important bit
+		in this assessment
+	
+  - Commit changes frequently (every half hour so is good) so we can get an
+		idea of how you work
+ 
+	- Finishing the game is not important at all. 
+	If however you want to send us a completed version in your
+		own time, that will be great :)

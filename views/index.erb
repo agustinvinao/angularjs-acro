@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html ng-app="acroApp" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Acro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <%=stylesheet_link_tag('vendor/reset/reset.css')%>
+    <%=stylesheet_link_tag('vendor/bootstrap/css/bootstrap.min.css')%>
+
+    <%=stylesheet_link_tag('stylesheets/application.css')%>
+  </head>
+  <body>
+
+    <div ng-view></div>
+
+    <%=javascript_script_tag('vendor/jquery/jquery.min.js')%>
+    <%=javascript_script_tag('vendor/bootstrap/js/bootstrap.min.js')%>
+    <%=javascript_script_tag('vendor/angularjs/angular.js')%>
+
+    <%=javascript_script_tag('javascripts/application.js')%>
+  </body>
+</html>

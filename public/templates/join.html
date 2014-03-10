@@ -1,0 +1,13 @@
+<div class="page" ng-controller="GameController">
+  <div class="header">Welcome to Acro!</div>
+  <div class="game-status">
+    There are currently {{game.players.length}} players online.
+  </div>
+  <div class="join-form">
+    <form name="joinForm">
+      <label>Pick a handle:</label>
+      <input type="text" required ng-model="player.requestedName">
+      <input type="submit" ng-disabled="!joinForm.$valid" ng-click="joinGame()" value="Join game">
+    </form>
+  </div>
+</div>

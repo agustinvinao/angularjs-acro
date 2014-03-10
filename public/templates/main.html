@@ -1,0 +1,51 @@
+<div class="page" ng-controller="GameController">
+  <div class="header">
+    <div class="header left">
+      Hello <span ng-show="player.name">{{player.name}}</span><span ng-hide="player.name">Stranger [<a href="/">join</a>]</span>
+    </div>
+    <div class="header right">
+      Round {{roundNumber()}} {{ {play: 'play ends', vote: 'voting ends', result: 'begins'}[game.phase] }} in ... {{secondsLeft()}}s
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="leaderboard">
+      <div ng-show="game.roundNumber" class="score-title">Scores after {{game.roundNumber - 1}} rounds:</div>
+      <div ng-hide="game.roundNumber" class="score-title">Current scores:</div>
+      <div class="scores">
+        <table>
+          <tbody>
+            <tr ng-repeat="p in game.players">
+              <td>{{p.name}} </td><td>{{p.score}}</td>
+            </tr>
+            <tr colspan="2"></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="acro-container">
+      <div class="acro-title">The currency acronym is:</div>
+      <div class="acro">
+        {{game.acro}}
+      </div>
+      <div class="acro-form" ng-show="game.phase == 'play'">
+        <form name="playForm" class="form-inline" role="form">
+          <div class="form-group">
+            <label>Suggest an expansion:</label>
+            <input type="text" required ng-model="player.suggestedExpansion">
+            <input type="submit" class="btn" ng-disabled="!playForm.$valid" ng-click="submitEntry()" value="Submit">
+          </div>
+        </form>
+      </div>
+      <div class="acro-form" ng-show="game.phase == 'vote'">
+        <form name="voteForm" class="form-inline" role="form">
+          <div class="form-group">
+            <label>Pick your favourite:</label>
+            <input type="radio" ng-repeat="e in game.entries" required ng-model="player.chosenEntry" value="{{e.uuid}}>{{e.expansion}}</input>
+            <input type="submit" class="btn" ng-disabled="!voteForm.$valid" ng-click="submitVote()" value="Submit">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</h3>
