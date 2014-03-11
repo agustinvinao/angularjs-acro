@@ -4,7 +4,13 @@ angular.module('acroApp', ['acroApp.controllers', 'acroApp.services'])
     $routeProvider
       .when('/', {controller: 'GameController', templateUrl: '/templates/join.html'})
       .otherwise({redirectTo:'/'});
-}])
+  }])
+  .run(['$rootScope', 'Game', '$log', function($rootScope, Game, $log){
+    Game.get({name: 'test'}, function(game) {
+      $rootScope.game = new Game(game);
+      $log.info('$scope.game: ', $scope.game)
+    });
+  }]);
 
 angular.module('acroApp.services', ['ngResource'])
   .factory('Game', ['$resource', function($resource){
@@ -47,10 +53,7 @@ angular.module('acroApp.services', ['ngResource'])
 
 angular.module('acroApp.controllers', [])
   .controller('GameController', ['$scope', 'Game', '$log', function($scope, Game, $log) {
-    Game.get({name: 'test'}, function(game) {
-      $scope.game = new Game(game);
-      $log.info('$scope.game: ', $scope.game)
-    });
+
   }]);
 // TODO: Implement your controllers, directives and services here
 
