@@ -57,9 +57,15 @@ describe AcroApi do
     end
 
     it 'should get player info' do
-      get 'v1/player/23432', nil, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
+      name = 'Player'
+      post 'v1/player', {name: name}, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
+      last_response.status.should == 201
+      player = json_parse(last_response.body)
+
+      get "v1/player/#{player[:uuid]}", nil, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
       last_response.status.should == 200
-      json_parse(last_response.body).should == nil
+      response = json_parse(last_response.body)
+      response.should == {uuid: player[:uuid], name: player[:name], requested_name: player[:requested_name], score: 0}
     end
 
     it 'should submit and entry' do

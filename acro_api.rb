@@ -12,7 +12,7 @@ class AcroApi < Grape::API
   end
 
   namespace :game do
-    desc "Add a player"
+    desc 'Add a player'
     params do
       requires :name, type: String
     end
@@ -22,7 +22,7 @@ class AcroApi < Grape::API
   end
 
   namespace :player do
-    desc "Join the game"
+    desc 'Join the game'
     params do
       requires :name, type: String
     end
@@ -30,14 +30,15 @@ class AcroApi < Grape::API
       present game.newPlayer(params[:name]), with: Player::Entity
     end
 
-    desc "Get player info"
+    desc 'Get player info'
     params do
+      requires :player_id, type: String
     end
     get '/:player_id' do
-      # TODO: Implement returning player info
+      present game.getPlayer(params[:player_id]), with: Player::Entity, type: :full
     end
 
-    desc "Submit an entry"
+    desc 'Submit an entry'
     params do
       requires :acro, type: String
       requires :expansion, type: String
@@ -46,7 +47,7 @@ class AcroApi < Grape::API
       # TODO: Implement accepting an entry from a player
     end
 
-    desc "Submit a vote"
+    desc 'Submit a vote'
     params do
       requires :entry, type: String
     end

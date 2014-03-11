@@ -9,7 +9,7 @@ class Player < Hash
   class Entity < Grape::Entity
     expose :uuid, :name
     expose :requested_name, if: lambda { |instance, options| instance.requested_name.present? }
-    expose :score, if: lambda { |instance, options| instance.score.present?  }
+    expose :score, if: {type: :full}
   end
 
   def initialize(hash = {})
@@ -26,7 +26,7 @@ class Player < Hash
   def defaults
     {
       uuid: SecureRandom.uuid,
-      score: nil
+      score: 0
     }
   end
 

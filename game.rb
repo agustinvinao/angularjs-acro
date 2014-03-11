@@ -51,6 +51,10 @@ class Game < Hash
     player
   end
 
+  def getPlayer(player_id)
+    self['players'].detect{|player| player.uuid == player_id}
+  end
+
   private
 
   def hasName?(name)
