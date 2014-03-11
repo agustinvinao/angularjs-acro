@@ -22,7 +22,7 @@ class Game < Hash
     expose :results, :winner, if: lambda { |instance, options| instance.phase == PHASE_RESULTS }
   end
 
-  TIME_PER_PHASE  = 5 # value in seconds
+  TIME_PER_PHASE  = 30 # value in seconds
   TOTAL_ROUNDS    = 10
   PHASE_PLAY      = 'play'
   PHASE_VOTE      = 'vote'
