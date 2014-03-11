@@ -23,3 +23,9 @@ the game. This behavior runs the game with at least one player.
 
 As an alternative approach we can define that all players in a game need to change their status from waiting to ready as
 a flag to starts the game. This approach runs the game with 1 or more player depending on player's state.
+
+
+### Player name required:
+
+In the original api code this parameter is not required, but from the requirements 'users go to a website and sign in
+using a handle.' I assume we need to defined as required

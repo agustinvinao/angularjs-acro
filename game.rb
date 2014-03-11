@@ -1,6 +1,7 @@
 require 'securerandom'
+require_relative 'player.rb'
 class Game < Hash
-
+  include Hashie::Extensions::MethodAccess
   def entity
     Entity.new(self)
   end
@@ -17,17 +18,16 @@ class Game < Hash
   PHASE_RESULTS   = 'results'
   MAX_ACROM_SIZE  = 5
 
-  attr_accessor :uuid, :round_number, :phase, :phase_ends_at, :acro, :players, :winner, :results
-
-  def initialize
-    @uuid           = SecureRandom.uuid # Game UUID
-    @round_number   = 1                 # Starts with 1
-    @phase          = PHASE_PLAY        # One of: play, vote, results
-    @acro           = generateRandomAcrom
-    @players        = []
-    @winner         = nil
-    @results        = nil
-    @phase_ends_at  = nil # we set the this when we have the first player,
+  def initialize(hash = {})
+    super
+    self['uuid']           = SecureRandom.uuid # Game UUID
+    self['round_number']   = 1                 # Starts with 1
+    self['phase']          = PHASE_PLAY        # One of: play, vote, results
+    self['acro']           = generateRandomAcrom
+    self['players']        = []
+    self['winner']         = nil
+    self['results']        = nil
+    self['phase_ends_at']  = nil # we set the this when we have the first player,
                           # meanwhile we are waiting for players
   end
 
@@ -37,16 +37,39 @@ class Game < Hash
     end
     def tick!
       puts "Game phase ticker"
-      # TODO: Do something to foward the game
+      Game.instance.resetPhase!
     end
   end
 
-  # TODO: Implement the game class here
+  def resetPhase!
+    self['phase_ends_at'] = new_time if self['players'].size > 0
+  end
+
+  def newPlayer(name)
+    player = Player.new(hasName?(name) ? {name: fixUserNames(name), requested_name: name} : {name: name})
+    self['players'] << player
+    player
+  end
 
   private
 
-  def reset_timer
-    @phase_ends_at = Time.at(Time.now.tv_sec + TIME_PER_PHASE)
+  def hasName?(name)
+    duplicatedNames(name).size > 0
+  end
+
+  def fixUserNames(name)
+    max = duplicatedNames(name).map{|item| item.gsub(/#{name}/, '')}.keep_if{|item| !item.empty?}.max
+    "#{name}#{max.to_i+1}"
+  end
+
+  def duplicatedNames(name)
+    self['players'].map(&:name).select{|n| n.start_with?(name)}
+  end
+
+
+  def new_time
+    puts "timer resetted"
+    Time.at(Time.now.tv_sec + TIME_PER_PHASE)
   end
 
   def generateRandomAcrom

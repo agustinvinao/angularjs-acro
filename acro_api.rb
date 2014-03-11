@@ -23,8 +23,11 @@ class AcroApi < Grape::API
 
   namespace :player do
     desc "Join the game"
+    params do
+      requires :name, type: String
+    end
     post do
-      # TODO: Implement joining the game
+      present game.newPlayer(params[:name]), with: Player::Entity
     end
 
     desc "Get player info"

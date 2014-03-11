@@ -13,7 +13,8 @@ describe AcroApi do
     it 'should return code 400 without name' do
       get 'v1/game', nil, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
       last_response.status.should == 400
-      json_parse(last_response.body).should == {:error => 'name is missing'}
+      response = json_parse(last_response.body)
+      response.should == {:error => 'name is missing'}
     end
 
     it 'should return game state for a game' do
@@ -32,10 +33,27 @@ describe AcroApi do
   end
 
   context 'player namespace' do
-    it 'should join the game' do
+    it "should reject the player if doesn't have name" do
       post 'v1/player', nil, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
+      last_response.status.should == 400
+      response = json_parse(last_response.body)
+      response.should == {:error => 'name is missing'}
+    end
+
+    it 'should join the game' do
+      name = 'Player'
+      post 'v1/player', {name: name}, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
       last_response.status.should == 201
-      json_parse(last_response.body).should == nil
+      response = json_parse(last_response.body)
+      response.should == {uuid: response[:uuid], name: name}
+    end
+
+    it 'should join the game with a different name as the required' do
+      name = 'Player'
+      post 'v1/player', {name: name}, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
+      last_response.status.should == 201
+      response = json_parse(last_response.body)
+      response.should == {uuid: response[:uuid], name: "#{name}1", requested_name: name}
     end
 
     it 'should get player info' do
