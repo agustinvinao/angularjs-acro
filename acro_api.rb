@@ -1,6 +1,6 @@
-
 require 'grape'
-
+require 'grape-entity'
+require_relative 'game'
 class AcroApi < Grape::API
   version 'v1', using: :path
   format :json
@@ -12,13 +12,12 @@ class AcroApi < Grape::API
   end
 
   namespace :game do
-    get do
-      # TODO: Return game state
-    end
-
     desc "Add a player"
     params do
       requires :name, type: String
+    end
+    get do
+      present game, with: Game::Entity
     end
   end
 
@@ -52,6 +51,4 @@ class AcroApi < Grape::API
       # TODO: Implement accepting a vote
     end
   end
-
 end
-

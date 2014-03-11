@@ -2,22 +2,32 @@ require_relative 'spec_helper.rb'
 
 describe AcroApi do
   include Rack::Test::Methods
+  include JsonHelpers
 
   def app
     AcroApi.new
   end
 
   context 'game namespace' do
-    it 'should return game state' do
+
+    it 'should return code 400 without name' do
       get 'v1/game', nil, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
-      last_response.status.should == 200
-      last_response.body.should == 'null'
+      last_response.status.should == 400
+      json_parse(last_response.body).should == {:error => 'name is missing'}
     end
 
-    it 'should return game state for a player' do
+    it 'should return game state for a game' do
       get 'v1/game', {name: 'test_game'}, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
       last_response.status.should == 200
-      last_response.body.should == 'null'
+      response = json_parse(last_response.body)
+      # Is not responsibility of the api tests to check if a game has a valid uuid.
+      # I only need to be sure that we have a uuid for the game.
+      # When we have full unit test we can move next two lines to model test.
+      response[:uuid].should_not be_nil
+      response[:uuid].should_not be_empty
+      response[:acro].should_not be_nil
+      response[:acro].should_not be_empty
+      response.should == {uuid: response[:uuid], round_number: 1, phase: Game::PHASE_PLAY, phase_ends_at: nil, acro: response[:acro], players: [], winner: nil}
     end
   end
 
@@ -25,25 +35,25 @@ describe AcroApi do
     it 'should join the game' do
       post 'v1/player', nil, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
       last_response.status.should == 201
-      last_response.body.should == 'null'
+      json_parse(last_response.body).should == nil
     end
 
     it 'should get player info' do
       get 'v1/player/23432', nil, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
       last_response.status.should == 200
-      last_response.body.should == 'null'
+      json_parse(last_response.body).should == nil
     end
 
     it 'should submit and entry' do
       post 'v1/player/23432/entry', {acro: 'TZFGU', expansion: 'Traditionally, Zombies Feel Great Undead'}, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
       last_response.status.should == 201
-      last_response.body.should == 'null'
+      json_parse(last_response.body).should == nil
     end
 
     it 'should submit a vote' do
       post 'v1/player/23432/vote', {entry: 'Traditionally, Zombies Feel Great Undead'}, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
       last_response.status.should == 201
-      last_response.body.should == 'null'
+      json_parse(last_response.body).should == nil
     end
   end
 

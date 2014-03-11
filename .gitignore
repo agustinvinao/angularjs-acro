@@ -26,3 +26,5 @@ doc/
 /.idea/dictionaries/agustinvinao.xml
 /.idea/angularjs-acro.iml
 /.idea/.name
+/.ruby-version
+/.sass-cache/
