@@ -8,8 +8,8 @@ class Player < Hash
 
   class Entity < Grape::Entity
     expose :uuid, :name
-    expose :requested_name, if: lambda { |instance, options| instance.requested_name.present? }
-    expose :score, if: {type: :full}
+    expose :requested_name, unless: lambda { |instance, options| instance.requested_name.nil? }
+    expose :score, unless: lambda { |instance, options| instance.score.nil? }
   end
 
   def initialize(hash = {})

@@ -18,6 +18,6 @@ end
 require 'rufus-scheduler'
 require 'game'
 
-Rufus::Scheduler.new.every '30s' do
+Rufus::Scheduler.new.every "#{Game::TIME_PER_PHASE}s" do
   Game.tick!
 end

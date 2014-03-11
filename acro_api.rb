@@ -1,6 +1,8 @@
 require 'grape'
 require 'grape-entity'
 require_relative 'game'
+
+
 class AcroApi < Grape::API
   version 'v1', using: :path
   format :json
@@ -27,7 +29,10 @@ class AcroApi < Grape::API
       requires :name, type: String
     end
     post do
-      present game.newPlayer(params[:name]), with: Player::Entity
+      player = game.newPlayer(params[:name])
+      player2 = player.clone
+      player2['score'] = nil
+      present player2, with: Player::Entity
     end
 
     desc 'Get player info'
@@ -35,7 +40,7 @@ class AcroApi < Grape::API
       requires :player_id, type: String
     end
     get '/:player_id' do
-      present game.getPlayer(params[:player_id]), with: Player::Entity, type: :full
+      present game.getPlayer(params[:player_id]), with: Player::Entity
     end
 
     desc 'Submit an entry'
@@ -44,8 +49,16 @@ class AcroApi < Grape::API
       requires :expansion, type: String
     end
     post '/:player_id/entry' do
-      # TODO: Implement accepting an entry from a player
+      entry = game.newPlayerEntry(params[:player_id], params[:acro], params[:expansion])
+      #if entry.accepted
+      #  present entry, with: Entry::Entity
+      #else
+      #  # redirect '/:player_id/entry', {status: 200}
+      #  present entry, with: Entry::Entity
+      #end
+      entry.accepted ? present(entry, with: Entry::Entity) : present(entry, with: Entry::Entity)
     end
+
 
     desc 'Submit a vote'
     params do
@@ -53,6 +66,8 @@ class AcroApi < Grape::API
     end
     post '/:player_id/vote' do
       # TODO: Implement accepting a vote
+      vote = game.registerPlayerVote(params[:player_id], params[:entry])
+      vote.accepted ? present(vote, vith: Vote::Entity) : present(vote, vith: Vote::Entity)
     end
   end
 end
