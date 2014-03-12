@@ -10,15 +10,18 @@ angular.module('acroApp', ['acroApp.controllers', 'acroApp.services'])
     Game.get({name: 'test'}).$then(function(response){
       $rootScope.game.updateInfo(response.data);
       $rootScope.player = new Player;
-
-      // TODO: Needs test for start status and cookie data read
+      // TODO: Needs to move this verification to a service or factory
+      var player = $rootScope.player.fromStore();
       // if the cookies has player data we need to verify if the user exists in game
-      if (angular.isDefined($cookies.player)){
-        var player = angular.fromJson($cookies.player);
+      if (player){
         if ($rootScope.game.hasPlayer(player.uuid) == true){
+          // we check if the player stored in cookies belongs to the current game
+          // if the user belongs to the current game redirects to play it
           $rootScope.player.updateInfo(player);
           $location.path('/main');
         }else{
+          // if the player not belongs to the current game we need to remove it from cookies and redirects the player
+          // to set a new handler
           delete $cookies.player;
           $location.path('/');
         }
@@ -26,22 +29,26 @@ angular.module('acroApp', ['acroApp.controllers', 'acroApp.services'])
         $cookies.player = $rootScope.player.serialize();
       }
     });
-
   }]);
-
-
 angular.module('acroApp.services', ['ngResource'])
-  .factory('Player', ['$resource', function($resource){
+  .factory('Player', ['$resource', '$cookies', function($resource, $cookies){
     var player = $resource('/acro/api/v1/player', null, {
         joinGame: {method: 'POST'},
         submitEntry: {method: 'POST', url: '/acro/api/v1/player/:player_id/entry', params: {player_id: '@player_id'}},
         submitVote: {method: 'POST', url: '/acro/api/v1/player/:player_id/vote', params: {player_id: '@player_id'}}
       });
-
+    player.prototype.fromStore = function(){
+      if(angular.isDefined($cookies.player)){
+        return angular.fromJson($cookies.player);
+      }else{
+        return undefined;
+      }
+    }
     player.prototype.updateInfo = function(data){
-      this.uuid = data.uuid;
-      this.name = data.name;
-      this.requestedName = data.requestedName;
+      this.uuid           = data.uuid;
+      this.name           = data.name;
+      this.requestedName  = data.requestedName;
+      $cookies.player     = this.serialize(); //store the player in a cookie to read it if the user refresh
     };
     player.prototype.serialize = function(){
       return angular.toJson(this);
@@ -72,7 +79,6 @@ angular.module('acroApp.services', ['ngResource'])
       }else{
         return -1;
       }
-
     }
     game.prototype.updateInfo = function(data){
       this.phase_ends_at  = data.phase_ends_at;
@@ -84,12 +90,15 @@ angular.module('acroApp.services', ['ngResource'])
       this.results        = data.results;
       this.acro           = data.acro;
     }
+    game.prototype.addPlayer = function(player){
+      this.players.push(player);
+    }
     return game;
   }])
   .value('version', '0.1');
 
 angular.module('acroApp.controllers', ['ngCookies'])
-  .controller('GameController', ['$scope', 'Player', '$location', 'Game', '$cookies', function($scope, Player, $location, Game, $cookies) {
+  .controller('GameController', ['$scope', 'Player', '$location', 'Game', function($scope, Player, $location, Game) {
     $scope.secondsLeft = function(){
       return $scope.game.phaseSecLeft();
     }
@@ -115,18 +124,17 @@ angular.module('acroApp.controllers', ['ngCookies'])
     }
     $scope.submitVote = function(){
       $scope.player.voted = true;
-      Player.submitVote({player_id: $scope.player.uuid, entry: $scope.player.chosenEntry});
+      Player.submitVote({player_id: $scope.player.uuid, entry: $scope.player.chosenEntry})
     };
     $scope.submitEntry = function(){
-      Player.submitEntry({player_id: $scope.player.uuid, acro: $scope.game.acro, expansion: $scope.player.suggestedExpansion});
+      Player.submitEntry({player_id: $scope.player.uuid, acro: $scope.game.acro, expansion: $scope.player.suggestedExpansion}).$then(function(entry){
+        $scope.player.setCurrentEntry(entry);
+      });
     };
     $scope.joinGame = function(){
-      Player.joinGame($scope.player).$then(function(player){
-        $scope.player.updateInfo(player.data); // update the player object
-        // TODO: Move to Factory
-        $scope.game.players.push(player.data); // update the game object
-        // TODO: Move and test to Factory
-        $cookies.player = $scope.player.serialize(); //store the player in a cookie to read it if the user refresh the screen
+      Player.joinGame($scope.player).$then(function(response){
+        $scope.player.updateInfo(response.data); // update the player object
+        $scope.game.addPlayer(response.data); // update the game object
         $location.path('/main');
       });
     };
@@ -134,4 +142,3 @@ angular.module('acroApp.controllers', ['ngCookies'])
       return $scope.game.round_number;
     };
   }]);
-// TODO: check when the user set expasion and it has time, it shuold show to change it.
