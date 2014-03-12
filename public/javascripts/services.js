@@ -24,6 +24,13 @@ angular.module('acroApp.services', ['ngResource'])
     player.prototype.setCurrentEntry = function(entry){
       this.entry = entry;
     }
+    player.prototype.setVoted = function(){
+      if(angular.isUndefined(this.voted)){
+        this.voted = true;
+      }else{
+        this.voted = false;
+      }
+    }
     return player;
   }])
   .factory('Game', ['$resource', function($resource){

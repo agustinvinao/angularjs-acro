@@ -24,8 +24,8 @@ angular.module('acroApp.controllers', ['ngCookies'])
       return angular.isDefined($scope.player.chosenEntry) && $scope.player.voted;
     }
     $scope.submitVote = function(){
-      $scope.player.voted = true;
-      Player.submitVote({player_id: $scope.player.uuid, entry: $scope.player.chosenEntry})
+      $scope.player.setVoted();
+      Player.submitVote({player_id: $scope.player.uuid, entry: $scope.player.chosenEntry});
     };
     $scope.submitEntry = function(){
       Player.submitEntry({player_id: $scope.player.uuid, acro: $scope.game.acro, expansion: $scope.player.suggestedExpansion}).$then(function(entry){

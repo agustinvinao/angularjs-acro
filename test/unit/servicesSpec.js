@@ -43,6 +43,11 @@ describe('service', function() {
       current_player.setCurrentEntry(entry);
       expect(current_player.entry).toEqual(entry);
     });
+    it('should set the player entry', function(){
+      current_player.setVoted();
+      expect(current_player.voted).toBeTruthy();
+    });
+
   });
 
   describe('Game', function(){
