@@ -58,6 +58,26 @@ describe('acro app', function() {
       expect(phase.getText()).toMatch(/Round \d+ play (ends|voting ends|begins) in \.\.\. \d+s/)
     });
 
+    it('should have the players scores', function(){
+      //pending
+    });
+
+    it('should show to improve expansion after submit', function(){
+      //pending
+    });
+
+    it('should show to vote for an expacion', function(){
+      //pending
+    });
+
+    it('should avoid to vote for the player expansion', function(){
+      //pending
+    });
+
+    it('should change the phase after the phase game time', function(){
+      //pending
+    });
+
 
   });
 
