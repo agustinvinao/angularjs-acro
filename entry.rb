@@ -7,13 +7,14 @@ class Entry < Hash
   end
 
   class Entity < Grape::Entity
-    expose :uuid, :expansion, :acro, :received_at, :accepted
+    expose :uuid, :expansion, :acro, :received_at, :accepted, :player_id
     expose :error, safe: true, if: lambda { |instance, options| !instance.error.blank? }
   end
 
   def initialize(hash = {})
     super
     hash.merge!(defaults)
+    self['player_id']   = hash[:player_id]
     self['received_at'] = hash[:received_at]
     self['uuid']        = hash[:uuid]
     self['acro']        = hash[:acro]

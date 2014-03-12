@@ -1,3 +1,22 @@
+entries:
+<table>
+  <tr>
+    <td>
+      <ul>
+        <li ng-repeat="entry in game.entries">{{entry.expansion}}</li>
+      </ul>
+    </td>
+    <td>
+      <ul>
+        <li ng-repeat="result in game.results">{{result}}</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+{{game}}
+<br/>
+{{player}}
+<br/>
 <div class="page" ng-controller="GameController">
   <div class="header">
     <div class="header left">
@@ -16,7 +35,7 @@
         <table>
           <tbody>
             <tr ng-repeat="p in game.players">
-              <td>{{p.name}} </td><td>{{p.score}}</td>
+              <td>{{p.name}} </td><td>: {{p.score}}</td>
             </tr>
             <tr colspan="2"></tr>
           </tbody>
@@ -29,20 +48,36 @@
         {{game.acro}}
       </div>
       <div class="acro-form" ng-show="game.phase == 'play'">
+        <div ng-show="player.entry">Your submission: {{player.suggestedExpansion}}</div>
         <form name="playForm" class="form-inline" role="form">
           <div class="form-group">
-            <label>Suggest an expansion:</label>
+            <label ng-hide="player.entry" >Suggest an expansion:</label>
+            <label ng-show="player.entry">Improve it:</label>
+
             <input type="text" required ng-model="player.suggestedExpansion">
             <input type="submit" class="btn" ng-disabled="!playForm.$valid" ng-click="submitEntry()" value="Submit">
           </div>
         </form>
       </div>
+
+
       <div class="acro-form" ng-show="game.phase == 'vote'">
         <form name="voteForm" class="form-inline" role="form">
           <div class="form-group">
             <label>Pick your favourite:</label>
-            <input type="radio" ng-repeat="e in game.entries" required ng-model="player.chosenEntry" value="{{e.uuid}}>{{e.expansion}}</input>
-            <input type="submit" class="btn" ng-disabled="!voteForm.$valid" ng-click="submitVote()" value="Submit">
+            <ul class="expansions">
+              <li ng-repeat="e in game.entries">
+                <input type="radio" id="{{e.uuid}}" value="{{e.uuid}}" ng-model="player.chosenEntry" ng-disabled="{{e.player_id == player.uuid}}" />
+                <label for="{{e.uuid}}" ng-hide="{{e.player_id == player.uuid}}">{{e.expansion}}</label>
+                <label for="{{e.uuid}}" ng-show="{{e.player_id == player.uuid}}" class="disabled">{{e.expansion}}</label>
+              </li>
+              <li>
+                <input type="radio" id="none" value="none" ng-model="player.chosenEntry" />
+                <label for="none">None of the above</label>
+              </li>
+            </ul>
+            <!--<input type="submit" class="btn"  ng-click="submitVote()" ng-disabled="!voteForm.$valid" value="Submit">-->
+            <button class="btn"  ng-click="submitVote()" ng-disabled="playerHasVoted()" >Submit</button>
           </div>
         </form>
       </div>

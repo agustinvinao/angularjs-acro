@@ -37,3 +37,11 @@ if you have your karma bin file in a different location ($BASE_DIR/../node_modul
 create a new .sh file and include it in gitignore file.
 
 As an example of this case you can check scripts/my-e2e-test.sh
+
+
+## Main view:
+
+THis view has some functions defined to call directly. For example, the line when it says about the round Number it calls
+a function defined in the controller.
+In some cases it can be called directly from the game model object.
+

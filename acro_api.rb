@@ -26,10 +26,10 @@ class AcroApi < Grape::API
   namespace :player do
     desc 'Join the game'
     params do
-      requires :name, type: String
+      requires :requestedName, type: String
     end
     post do
-      player = game.newPlayer(params[:name])
+      player = game.newPlayer(params[:requestedName])
       player2 = player.clone
       player2['score'] = nil
       present player2, with: Player::Entity
@@ -49,6 +49,7 @@ class AcroApi < Grape::API
       requires :expansion, type: String
     end
     post '/:player_id/entry' do
+      # TODO: when the user updates the entry
       entry = game.newPlayerEntry(params[:player_id], params[:acro], params[:expansion])
       #if entry.accepted
       #  present entry, with: Entry::Entity
