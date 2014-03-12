@@ -1,0 +1,88 @@
+/* TODO: Add your application specific css here */
+
+.header{
+    padding: 40px 15px;
+    text-align: center;
+    font-size: 2em;
+    font-weight: bolder;
+}
+.game-status, .join-form{
+    text-align: center;
+    padding: 0 0 40px 0;
+}
+label{
+    display:block;
+}
+
+.left{
+    float:left;
+}
+.right {
+    float: right;
+}
+.header.header{
+    font-size: 1.5em;
+}
+.content{
+    clear:both;
+}
+.leaderboard{
+    float:right;
+    width:200px;
+}
+.score-title{
+    font-weight: bolder;
+}
+.acro-container{
+    width:80%;
+}
+.acro-title {
+    font-weight: bolder;
+    padding:20px 0;
+    margin:0px auto;
+    text-align: center;
+}
+.acro{
+    width:80%;
+    margin:0px auto;
+    text-align: center;
+    font-size: 3em;
+    font-weight: bolder;
+    letter-spacing: 8px;
+}
+.form-group{
+    width: 80%;
+}
+.form-group input[type="text"] {
+    width: 80%;
+}
+.scores{
+    margin: 0 0 10px 0;
+}
+.scores table{
+    border:1px solid black;
+    width:100%;
+    margin: 0 0 10px 0;
+}
+.scores table td{
+    padding:5px;
+}
+.scores table tr{
+    border-bottom:1px solid black;
+}
+ul.expansions{
+    clear:both;
+}
+ul.expansions li{
+    display:block;
+}
+ul.expansions li label{
+    margin: 0 0 0 10px;
+}
+ul.expansions li input{
+    float:left;
+    margin: 0 10px 0 0;
+}
+label.disabled{
+    color:#999999;
+}
