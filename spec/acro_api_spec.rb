@@ -31,7 +31,7 @@ describe AcroApi do
       response.should == {uuid: response[:uuid],
                           round_number: 1,
                           phase: Game::PHASE_PLAY,
-                          phase_ends_at: nil,
+                          phase_ends_at: response[:phase_ends_at],
                           acro: response[:acro],
                           players: [],
                           entries: []}
@@ -46,13 +46,13 @@ describe AcroApi do
       post 'v1/player', nil, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
       last_response.status.should == 400
       response = json_parse(last_response.body)
-      response.should == {:error => 'name is missing'}
+      response.should == {:error => 'requestedName is missing'}
     end
 
     describe 'player tests' do
       before(:each) do
         @name   = 'Player'
-        post 'v1/player', {name: @name}, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
+        post 'v1/player', {requestedName: @name}, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
         @player = json_parse(last_response.body)
       end
       it 'should join the game' do
@@ -64,7 +64,7 @@ describe AcroApi do
 
 
       it 'should join the game with a different name as the required' do
-        post 'v1/player', {name: @name}, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
+        post 'v1/player', {requestedName: @name}, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
         last_response.status.should == 201
         response = json_parse(last_response.body)
         response.should == {uuid:           response[:uuid],
@@ -96,12 +96,33 @@ describe AcroApi do
                               acro:         @acro,
                               expansion:    @expansion,
                               received_at:  response[:received_at],
-                              accepted:     true}
+                              accepted:     true,
+                              player_id:    @player[:uuid]}
+        end
+
+        it 'should improve an entry' do
+          post "v1/player/#{@player[:uuid]}/entry", {acro: @acro, expansion: @expansion}, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
+          expansion = 'Traditionally Zombies Feel Great Undead'
+          post "v1/player/#{@player[:uuid]}/entry", {acro: @acro, expansion: expansion}, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
+          last_response.status.should == 201
+          response = json_parse(last_response.body)
+          response.should == {uuid:         response[:uuid],
+                              acro:         @acro,
+                              expansion:    expansion,
+                              received_at:  response[:received_at],
+                              accepted:     true,
+                              player_id:    @player[:uuid]}
+          get 'v1/game', {name: 'test_game'}, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
+          last_response.status.should == 200
+          response = json_parse(last_response.body)
+          entry = response[:entries].detect{|entry| entry[:player_id] == @player[:uuid]}
+          entry.should == {uuid:         entry[:uuid],
+                           expansion:    expansion,
+                           player_id:    @player[:uuid]}
         end
 
         it 'should submit an bad entry' do
           expansion = 'I think Zombies Feel Great Undead'
-
           post "v1/player/#{@player[:uuid]}/entry", {acro: @acro, expansion: expansion}, { 'HTTP_ACCEPT' => 'application/vnd.acme-v2+json' }
           #last_response.status.should == 200
           response = json_parse(last_response.body)
@@ -110,6 +131,7 @@ describe AcroApi do
                               expansion:    expansion,
                               received_at:  response[:received_at],
                               accepted:     false,
+                              player_id:    @player[:uuid],
                               error:        'Expansion not valid for acronym'}
         end
 
