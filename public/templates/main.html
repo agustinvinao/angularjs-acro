@@ -1,22 +1,3 @@
-entries:
-<table>
-  <tr>
-    <td>
-      <ul>
-        <li ng-repeat="entry in game.entries">{{entry.expansion}}</li>
-      </ul>
-    </td>
-    <td>
-      <ul>
-        <li ng-repeat="result in game.results">{{result}}</li>
-      </ul>
-    </td>
-  </tr>
-</table>
-{{game}}
-<br/>
-{{player}}
-<br/>
 <div class="page" ng-controller="GameController">
   <div class="header">
     <div class="header left">
@@ -52,7 +33,7 @@ entries:
         <form name="playForm" class="form-inline" role="form">
           <div class="form-group">
             <label ng-hide="player.entry" >Suggest an expansion:</label>
-            <label ng-show="player.entry">Improve it:</label>
+            <label ng-show="player.entry" >Improve it:</label>
 
             <input type="text" required ng-model="player.suggestedExpansion">
             <input type="submit" class="btn" ng-disabled="!playForm.$valid" ng-click="submitEntry()" value="Submit">
